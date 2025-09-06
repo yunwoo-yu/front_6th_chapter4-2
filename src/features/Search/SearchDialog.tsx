@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Checkbox,
   CheckboxGroup,
   FormControl,
@@ -20,7 +19,6 @@ import {
   TagCloseButton,
   TagLabel,
   Tbody,
-  Td,
   Text,
   Th,
   Thead,
@@ -30,10 +28,12 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { DAY_LABELS } from "./constants.ts";
-import { useScheduleContext } from "./ScheduleContext.tsx";
-import { Lecture } from "./types.ts";
-import { createCachedFetcher, parseSchedule } from "./utils.ts";
+import { DAY_LABELS } from "../../constants.ts";
+import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
+import { useScheduleContext } from "../../ScheduleContext.tsx";
+import { Lecture } from "../../types.ts";
+import { createCachedFetcher, parseSchedule } from "../../utils.ts";
+import { SearchItem } from "./SearchItem.tsx";
 
 interface Props {
   searchInfo: {
@@ -169,7 +169,7 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
     loaderWrapperRef.current?.scrollTo(0, 0);
   };
 
-  const addSchedule = (lecture: Lecture) => {
+  const addSchedule = useAutoCallback((lecture: Lecture) => {
     if (!searchInfo) return;
 
     const { tableId } = searchInfo;
@@ -185,7 +185,7 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
     }));
 
     onClose();
-  };
+  });
 
   useEffect(() => {
     const start = performance.now();
@@ -422,29 +422,11 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
                 <Table size="sm" variant="striped">
                   <Tbody>
                     {visibleLectures.map((lecture, index) => (
-                      <Tr key={`${lecture.id}-${index}`}>
-                        <Td width="100px">{lecture.id}</Td>
-                        <Td width="50px">{lecture.grade}</Td>
-                        <Td width="200px">{lecture.title}</Td>
-                        <Td width="50px">{lecture.credits}</Td>
-                        <Td
-                          width="150px"
-                          dangerouslySetInnerHTML={{ __html: lecture.major }}
-                        />
-                        <Td
-                          width="150px"
-                          dangerouslySetInnerHTML={{ __html: lecture.schedule }}
-                        />
-                        <Td width="80px">
-                          <Button
-                            size="sm"
-                            colorScheme="green"
-                            onClick={() => addSchedule(lecture)}
-                          >
-                            추가
-                          </Button>
-                        </Td>
-                      </Tr>
+                      <SearchItem
+                        key={`${lecture.id}-${index}`}
+                        addSchedule={addSchedule}
+                        {...lecture}
+                      />
                     ))}
                   </Tbody>
                 </Table>
