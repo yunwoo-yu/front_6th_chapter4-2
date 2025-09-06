@@ -1,3 +1,5 @@
+import { AxiosResponse } from "axios";
+
 export const fill2 = (n: number) => `0${n}`.substr(-2);
 
 export const parseHnM = (current: number) => {
@@ -11,12 +13,11 @@ const getTimeRange = (value: string): number[] => {
   return Array(end - start + 1)
     .fill(start)
     .map((v, k) => v + k);
-}
+};
 
 export const parseSchedule = (schedule: string) => {
-  const schedules = schedule.split('<p>');
-  return schedules.map(schedule => {
-
+  const schedules = schedule.split("<p>");
+  return schedules.map((schedule) => {
     const reg = /^([가-힣])(\d+(~\d+)?)(.*)/;
 
     const [day] = schedule.split(/(\d+)/);
@@ -27,4 +28,21 @@ export const parseSchedule = (schedule: string) => {
 
     return { day, range, room };
   });
+};
+
+export const createCachedFetcher = <T>(
+  fetchFn: () => Promise<AxiosResponse<T>>
+) => {
+  let cache: Promise<AxiosResponse<T>> | null = null;
+
+  return (): Promise<AxiosResponse<T>> => {
+    if (cache) {
+      console.log("캐시 사용");
+      return cache;
+    }
+
+    console.log("새로운 Promise 생성");
+    cache = fetchFn();
+    return cache;
+  };
 };
