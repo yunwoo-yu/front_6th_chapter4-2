@@ -6,7 +6,7 @@ import {
   PopoverContent,
   Text,
 } from "@chakra-ui/react";
-import { memo } from "react";
+
 import { useScheduleActions } from "../../ScheduleContext";
 
 interface Props {
@@ -36,4 +36,4 @@ const PopoverContentBody = ({ tableId, day, time }: Props) => {
   );
 };
 
-export default memo(PopoverContentBody);
+export default PopoverContentBody;

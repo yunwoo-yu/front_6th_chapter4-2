@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { memo, useMemo, useState } from "react";
-import ScheduleContainer from "./features/Schedule/ScheduleContainer.tsx";
-import SearchDialog from "./features/Search/SearchDialog.tsx";
+import ScheduleContainer from "./components/Schedule/ScheduleContainer.tsx";
+import SearchDialog from "./components/Search/SearchDialog.tsx";
 import { useScheduleState } from "./ScheduleContext.tsx";
 
 export const ScheduleTables = memo(() => {

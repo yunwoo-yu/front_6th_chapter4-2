@@ -1,11 +1,12 @@
-import { Button, ButtonGroup, Flex, Heading, Stack } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 
 import { Dispatch, memo, SetStateAction } from "react";
 import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
 import { useScheduleActions } from "../../ScheduleContext.tsx";
+import ScheduleDndProvider from "../../ScheduleDndProvider.tsx";
 import ScheduleTable from "../../ScheduleTable.tsx";
 import { Schedule } from "../../types.ts";
-import ScheduleDndProvider from "../../ScheduleDndProvider.tsx";
+import ScheduleTableHeader from "./ScheduleTableHeader.tsx";
 
 interface ScheduleItemProps {
   index: number;
@@ -56,26 +57,13 @@ const ScheduleContainer = memo(
     return (
       <ScheduleDndProvider draggedTableId={tableId}>
         <Stack key={tableId} width="600px">
-          <Flex justifyContent="space-between" alignItems="center">
-            <Heading as="h3" fontSize="lg">
-              시간표 {index + 1}
-            </Heading>
-            <ButtonGroup size="sm" isAttached>
-              <Button colorScheme="green" onClick={handleSearchClick}>
-                시간표 추가
-              </Button>
-              <Button colorScheme="green" mx="1px" onClick={duplicate}>
-                복제
-              </Button>
-              <Button
-                colorScheme="green"
-                isDisabled={disabledRemoveButton}
-                onClick={remove}
-              >
-                삭제
-              </Button>
-            </ButtonGroup>
-          </Flex>
+          <ScheduleTableHeader
+            index={index}
+            duplicate={duplicate}
+            remove={remove}
+            handleSearchClick={handleSearchClick}
+            disabledRemoveButton={disabledRemoveButton}
+          />
 
           <ScheduleTable
             key={`schedule-table-${index}`}

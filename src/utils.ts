@@ -43,6 +43,7 @@ export const createCachedFetcher = <T>(
 
     console.log("새로운 Promise 생성");
     cache = fetchFn();
+
     return cache;
   };
 };
