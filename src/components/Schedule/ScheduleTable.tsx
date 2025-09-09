@@ -2,11 +2,11 @@ import { Box, Popover, PopoverTrigger } from "@chakra-ui/react";
 import { useDndContext, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { ComponentProps, useMemo } from "react";
-import { CellSize, DAY_LABELS } from "./constants.ts";
-import PopoverContentBody from "./components/Schedule/PopoverContentBody.tsx";
-import ScheduleItem from "./components/Schedule/ScheduleItem.tsx";
-import ScheduleTableGrid from "./components/Schedule/ScheduleTableGrid.tsx";
-import { Schedule } from "./types.ts";
+import { CellSize, DAY_LABELS } from "../../constants.ts";
+import PopoverContentBody from "./PopoverContentBody.tsx";
+import ScheduleItem from "./ScheduleItem.tsx";
+import ScheduleTableGrid from "./ScheduleTableGrid.tsx";
+import { Schedule } from "../../types.ts";
 
 interface Props {
   tableId: string;

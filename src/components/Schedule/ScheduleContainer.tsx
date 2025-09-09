@@ -4,7 +4,7 @@ import { Dispatch, memo, SetStateAction } from "react";
 import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
 import { useScheduleActions } from "../../Provider/ScheduleProvider.tsx";
 import ScheduleDndProvider from "../../Provider/ScheduleDndProvider.tsx";
-import ScheduleTable from "../../ScheduleTable.tsx";
+import ScheduleTable from "./ScheduleTable.tsx";
 import { Schedule } from "../../types.ts";
 import ScheduleTableHeader from "./ScheduleTableHeader.tsx";
 
@@ -55,24 +55,23 @@ const ScheduleContainer = memo(
     });
 
     return (
-      <ScheduleDndProvider draggedTableId={tableId}>
-        <Stack key={tableId} width="600px">
-          <ScheduleTableHeader
-            index={index}
-            duplicate={duplicate}
-            remove={remove}
-            handleSearchClick={handleSearchClick}
-            disabledRemoveButton={disabledRemoveButton}
-          />
-
+      <Stack key={tableId} width="600px">
+        <ScheduleTableHeader
+          index={index}
+          duplicate={duplicate}
+          remove={remove}
+          handleSearchClick={handleSearchClick}
+          disabledRemoveButton={disabledRemoveButton}
+        />
+        <ScheduleDndProvider draggedTableId={tableId}>
           <ScheduleTable
             key={`schedule-table-${index}`}
             schedules={schedules}
             tableId={tableId}
             onScheduleTimeClick={handleScheduleTimeClick}
           />
-        </Stack>
-      </ScheduleDndProvider>
+        </ScheduleDndProvider>
+      </Stack>
     );
   }
 );

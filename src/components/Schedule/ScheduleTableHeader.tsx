@@ -40,4 +40,6 @@ const ScheduleTableHeader = ({
   );
 };
 
+ScheduleTableHeader.displayName = "ScheduleTableHeader";
+
 export default memo(ScheduleTableHeader);
