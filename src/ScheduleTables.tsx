@@ -2,10 +2,10 @@ import { Flex } from "@chakra-ui/react";
 import { memo, useMemo, useState } from "react";
 import ScheduleContainer from "./components/Schedule/ScheduleContainer.tsx";
 import SearchDialog from "./components/Search/SearchDialog.tsx";
-import { useScheduleState } from "./ScheduleContext.tsx";
+import { useScheduleState } from "./Provider/ScheduleProvider.tsx";
 
 export const ScheduleTables = memo(() => {
-  const schedulesMap = useScheduleState(); // 상태만 구독
+  const schedulesMap = useScheduleState();
   const [searchInfo, setSearchInfo] = useState<{
     tableId: string;
     day?: string;

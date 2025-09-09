@@ -18,16 +18,12 @@ import {
 import axios from "axios";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
-import { useScheduleActions } from "../../ScheduleContext.tsx";
+import { useScheduleActions } from "../../Provider/ScheduleProvider.tsx";
 import { Lecture } from "../../types.ts";
 import { createCachedFetcher, parseSchedule } from "../../utils.ts";
-import CreditsControl from "./CreditsControl.tsx";
-import DaysControl from "./DaysControl.tsx";
-import GradesControl from "./GradesControl.tsx";
-import MajorsControl from "./MajorsControl.tsx";
-import SearchControl from "./SearchControl.tsx";
+
 import { SearchItem } from "./SearchItem.tsx";
-import TimesControl from "./TimesControl.tsx";
+import { SearchControls } from "./SearchControls.tsx";
 
 interface Props {
   searchInfo: {
@@ -210,34 +206,34 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
         <ModalBody>
           <VStack spacing={4} align="stretch">
             <HStack spacing={4}>
-              <SearchControl
+              <SearchControls.SearchControl
                 query={searchOptions.query}
                 changeSearchOption={changeSearchOption}
               />
-              <CreditsControl
+              <SearchControls.CreditsControl
                 credits={searchOptions.credits}
                 changeSearchOption={changeSearchOption}
               />
             </HStack>
             <HStack spacing={4}>
-              <GradesControl
+              <SearchControls.GradesControl
                 grades={searchOptions.grades}
                 changeSearchOption={changeSearchOption}
               />
 
-              <DaysControl
+              <SearchControls.DaysControl
                 days={searchOptions.days}
                 changeSearchOption={changeSearchOption}
               />
             </HStack>
 
             <HStack spacing={4}>
-              <TimesControl
+              <SearchControls.TimesControl
                 times={searchOptions.times}
                 changeSearchOption={changeSearchOption}
               />
 
-              <MajorsControl
+              <SearchControls.MajorsControl
                 majors={searchOptions.majors}
                 allMajors={allMajors}
                 changeSearchOption={changeSearchOption}

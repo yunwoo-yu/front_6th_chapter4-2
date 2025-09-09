@@ -7,7 +7,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { useScheduleActions } from "../../ScheduleContext";
+import { useScheduleActions } from "../../Provider/ScheduleProvider";
 
 interface Props {
   tableId: string;

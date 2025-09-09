@@ -6,9 +6,9 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { memo, PropsWithChildren } from "react";
-import { CellSize, DAY_LABELS } from "./constants.ts";
-import { useAutoCallback } from "./hooks/useAutoCallback.tsx";
-import { useScheduleActions } from "./ScheduleContext.tsx";
+import { CellSize, DAY_LABELS } from "../constants.ts";
+import { useAutoCallback } from "../hooks/useAutoCallback.tsx";
+import { useScheduleActions } from "./ScheduleProvider.tsx";
 
 function createSnapModifier(): Modifier {
   return ({ transform, containerNodeRect, draggingNodeRect }) => {
@@ -60,6 +60,7 @@ function ScheduleDndProvider({
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const handleDragEnd = useAutoCallback((event: any) => {
     const { active, delta } = event;
     const { x, y } = delta;
