@@ -18,7 +18,7 @@ import {
 import axios from "axios";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
-import { useScheduleContext } from "../../ScheduleContext.tsx";
+import { useScheduleActions } from "../../ScheduleContext.tsx";
 import { Lecture } from "../../types.ts";
 import { createCachedFetcher, parseSchedule } from "../../utils.ts";
 import CreditsControl from "./CreditsControl.tsx";
@@ -71,7 +71,7 @@ const fetchAllLectures = async () =>
 
 // TODO: 이 컴포넌트에서 불필요한 연산이 발생하지 않도록 다양한 방식으로 시도해주세요.
 const SearchDialog = ({ searchInfo, onClose }: Props) => {
-  const { setSchedulesMap } = useScheduleContext();
+  const { setSchedulesMap } = useScheduleActions();
 
   const loaderWrapperRef = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
