@@ -16,6 +16,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { chain } from "lodash-es";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
 import { useScheduleActions } from "../../Provider/ScheduleProvider.tsx";
@@ -87,35 +88,29 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
 
   const parseScheduleCached = (schedule?: string) => {
     if (!schedule) return [];
-
     const cache = scheduleCacheRef.current;
     const hit = cache.get(schedule);
-
     if (hit) return hit;
-
     const parsed = parseSchedule(schedule);
-
     cache.set(schedule, parsed);
-
     return parsed;
   };
 
-  const filteredLectures = useMemo(() => {
+  // 검색 옵션 + 캐시를 캡처한 매칭 함수
+  const matchFn = useMemo(() => {
     const { query = "", credits, grades, days, times, majors } = searchOptions;
     const q = query.toLowerCase();
-
     const gradesSet = new Set(grades);
     const majorsSet = new Set(majors);
     const daysSet = new Set(days);
     const timesSet = new Set(times);
 
-    return lectures.filter((lecture) => {
+    return (lecture: Lecture) => {
       if (q) {
-        const title = lecture.title.toLowerCase();
+        const t = lecture.title.toLowerCase();
         const id = lecture.id.toLowerCase();
-        if (!title.includes(q) && !id.includes(q)) return false;
+        if (!t.includes(q) && !id.includes(q)) return false;
       }
-
       if (gradesSet.size && !gradesSet.has(lecture.grade)) return false;
       if (majorsSet.size && !majorsSet.has(lecture.major)) return false;
       if (credits && !lecture.credits.startsWith(String(credits))) return false;
@@ -130,15 +125,31 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
         )
           return false;
       }
-
       return true;
-    });
-  }, [lectures, searchOptions]);
+    };
+  }, [searchOptions]);
 
-  const lastPage = Math.ceil(filteredLectures.length / PAGE_SIZE);
+  // 총 개수: 정확 계산
+  const totalCount = useMemo(
+    () => chain(lectures).filter(matchFn).size().value(),
+    [lectures, matchFn]
+  );
+
+  // 화면에 필요한 만큼만 lazy take
   const visibleLectures = useMemo(
-    () => filteredLectures.slice(0, page * PAGE_SIZE),
-    [filteredLectures, page]
+    () =>
+      chain(lectures)
+        .filter(matchFn)
+        .take(page * PAGE_SIZE)
+        .value(),
+    [lectures, matchFn, page]
+  );
+
+  console.log(visibleLectures);
+
+  const lastPage = useMemo(
+    () => Math.ceil(totalCount / PAGE_SIZE),
+    [totalCount]
   );
   const allMajors = useMemo(
     () => [...new Set(lectures.map((lecture) => lecture.major))],
@@ -255,7 +266,7 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
                 changeSearchOption={changeSearchOption}
               />
             </HStack>
-            <Text align="right">검색결과: {filteredLectures.length}개</Text>
+            <Text align="right">검색결과: {totalCount}개</Text>
             <Box>
               <Table>
                 <Thead>
