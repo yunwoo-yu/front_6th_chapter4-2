@@ -16,12 +16,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { chain } from "lodash-es";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
 import { useScheduleActions } from "../../Provider/ScheduleProvider.tsx";
 import { Lecture } from "../../types.ts";
-import { createCachedFetcher, parseSchedule } from "../../utils.ts";
+import { createCachedFetcher, parseSchedule, chain } from "../../utils.ts";
 
 import { SearchItem } from "./SearchItem.tsx";
 import { SearchControls } from "./SearchControls.tsx";
