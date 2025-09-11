@@ -18,13 +18,15 @@ import {
 import axios from "axios";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
+import { useAutoCallback } from "../../hooks/useAutoCallback.ts";
+
 import { useScheduleActions } from "../../Provider/ScheduleProvider.tsx";
 import { Lecture } from "../../types.ts";
 import { createCachedFetcher, parseSchedule, chain } from "../../utils.ts";
 
 import { SearchItem } from "./SearchItem.tsx";
 import { SearchControls } from "./SearchControls.tsx";
+import { useDebounce } from "../../hooks/useDebounce.ts";
 
 interface Props {
   searchInfo: {
@@ -81,7 +83,7 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
     times: [],
     majors: [],
   });
-
+  const debouncedQuery = useDebounce(searchOptions.query, 300);
   const scheduleCacheRef = useRef<
     Map<string, ReturnType<typeof parseSchedule>>
   >(new Map());
@@ -102,13 +104,15 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
 
   // 검색 옵션 + 캐시를 캡처한 매칭 함수
   const matchFn = useMemo(() => {
-    const { query = "", credits, grades, days, times, majors } = searchOptions;
-    const queryText = query.trim().toLowerCase();
+    const { credits, grades, days, times, majors } = searchOptions;
+    const queryText = debouncedQuery?.trim().toLowerCase();
     const gradesSet = grades.length ? new Set(grades) : null;
     const majorsSet = majors.length ? new Set(majors) : null;
     const daysSet = days.length ? new Set(days) : null;
     const timesSet = times.length ? new Set(times) : null;
     const creditsPrefix = credits ? String(credits) : null;
+
+    console.log("연산 했음");
 
     return (lecture: Lecture) => {
       if (queryText) {
@@ -146,7 +150,14 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
       }
       return true;
     };
-  }, [searchOptions]);
+  }, [
+    debouncedQuery,
+    searchOptions.credits,
+    searchOptions.grades,
+    searchOptions.days,
+    searchOptions.times,
+    searchOptions.majors,
+  ]);
 
   // 총 개수: 정확 계산
   const totalCount = useMemo(
