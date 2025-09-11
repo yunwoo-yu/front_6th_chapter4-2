@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useMemo, useState } from "react";
 import dummyScheduleMap from "../dummyScheduleMap.ts";
-import { useAutoCallback } from "../hooks/useAutoCallback.tsx";
+import { useAutoCallback } from "../hooks/useAutoCallback.ts";
 import { Schedule } from "../types.ts";
 
 const ScheduleStateContext = React.createContext<Record<

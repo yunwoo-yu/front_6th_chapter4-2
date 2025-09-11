@@ -1,7 +1,7 @@
 import { Stack } from "@chakra-ui/react";
 
 import { Dispatch, memo, SetStateAction } from "react";
-import { useAutoCallback } from "../../hooks/useAutoCallback.tsx";
+import { useAutoCallback } from "../../hooks/useAutoCallback.ts";
 import { useScheduleActions } from "../../Provider/ScheduleProvider.tsx";
 import ScheduleDndProvider from "../../Provider/ScheduleDndProvider.tsx";
 import ScheduleTable from "./ScheduleTable.tsx";

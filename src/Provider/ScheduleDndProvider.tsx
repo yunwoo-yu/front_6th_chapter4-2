@@ -7,7 +7,7 @@ import {
 } from "@dnd-kit/core";
 import { memo, PropsWithChildren } from "react";
 import { CellSize, DAY_LABELS } from "../constants.ts";
-import { useAutoCallback } from "../hooks/useAutoCallback.tsx";
+import { useAutoCallback } from "../hooks/useAutoCallback.ts";
 import { useScheduleActions } from "./ScheduleProvider.tsx";
 
 function createSnapModifier(): Modifier {
