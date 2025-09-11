@@ -17,6 +17,7 @@ interface Props {
 
 const PopoverContentBody = ({ tableId, day, time }: Props) => {
   const { onDeleteScheduleButtonClick } = useScheduleActions();
+  const realTableId = tableId.split(":")[0];
 
   return (
     <PopoverContent onClick={(event) => event.stopPropagation()}>
@@ -27,7 +28,7 @@ const PopoverContentBody = ({ tableId, day, time }: Props) => {
         <Button
           colorScheme="red"
           size="xs"
-          onClick={() => onDeleteScheduleButtonClick(tableId, day, time)}
+          onClick={() => onDeleteScheduleButtonClick(realTableId, day, time)}
         >
           삭제
         </Button>
