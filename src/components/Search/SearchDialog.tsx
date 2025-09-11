@@ -22,11 +22,15 @@ import { useAutoCallback } from "../../hooks/useAutoCallback.ts";
 
 import { useScheduleActions } from "../../Provider/ScheduleProvider.tsx";
 import { Lecture } from "../../types.ts";
-import { createCachedFetcher, parseSchedule, chain } from "../../utils.ts";
+import {
+  collectMatchingUpTo,
+  createCachedFetcher,
+  parseSchedule,
+} from "../../utils.ts";
 
-import { SearchItem } from "./SearchItem.tsx";
-import { SearchControls } from "./SearchControls.tsx";
 import { useDebounce } from "../../hooks/useDebounce.ts";
+import { SearchControls } from "./SearchControls.tsx";
+import { SearchItem } from "./SearchItem.tsx";
 
 interface Props {
   searchInfo: {
@@ -84,26 +88,9 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
     majors: [],
   });
   const debouncedQuery = useDebounce(searchOptions.query, 300);
-  const scheduleCacheRef = useRef<
-    Map<string, ReturnType<typeof parseSchedule>>
-  >(new Map());
-
-  const parseScheduleCached = (schedule?: string) => {
-    if (!schedule) return [];
-    const cache = scheduleCacheRef.current;
-    const cached = cache.get(schedule);
-
-    if (cached) return cached;
-
-    const parsed = parseSchedule(schedule);
-
-    cache.set(schedule, parsed);
-
-    return parsed;
-  };
 
   // 검색 옵션 + 캐시를 캡처한 매칭 함수
-  const matchFn = useMemo(() => {
+  const filterFn = useMemo(() => {
     const { credits, grades, days, times, majors } = searchOptions;
     const queryText = debouncedQuery?.trim().toLowerCase();
     const gradesSet = grades.length ? new Set(grades) : null;
@@ -111,8 +98,6 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
     const daysSet = days.length ? new Set(days) : null;
     const timesSet = times.length ? new Set(times) : null;
     const creditsPrefix = credits ? String(credits) : null;
-
-    console.log("연산 했음");
 
     return (lecture: Lecture) => {
       if (queryText) {
@@ -135,7 +120,9 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
       }
 
       if (daysSet || timesSet) {
-        const schedules = parseScheduleCached(lecture.schedule);
+        const schedules = lecture.schedule
+          ? parseSchedule(lecture.schedule)
+          : [];
 
         if (daysSet && !schedules.some((s) => daysSet.has(s.day))) {
           return false;
@@ -159,20 +146,14 @@ const SearchDialog = ({ searchInfo, onClose }: Props) => {
     searchOptions.majors,
   ]);
 
-  // 총 개수: 정확 계산
-  const totalCount = useMemo(
-    () => chain(lectures).filter(matchFn).size().value(),
-    [lectures, matchFn]
+  const filteredLectures = useMemo(
+    () => lectures.filter(filterFn),
+    [lectures, filterFn]
   );
-
-  // 화면에 필요한 만큼만 lazy take
+  const totalCount = filteredLectures.length;
   const visibleLectures = useMemo(
-    () =>
-      chain(lectures)
-        .filter(matchFn)
-        .take(page * PAGE_SIZE)
-        .value(),
-    [lectures, matchFn, page]
+    () => collectMatchingUpTo(lectures, filterFn, page * PAGE_SIZE), // 첫 화면 빨라짐
+    [lectures, filterFn, page]
   );
 
   const lastPage = useMemo(

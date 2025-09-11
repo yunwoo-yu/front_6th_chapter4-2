@@ -1,8 +1,4 @@
 import { AxiosResponse } from "axios";
-import map from "lodash-es/map";
-import filter from "lodash-es/filter";
-import size from "lodash-es/size";
-import take from "lodash-es/take";
 
 export const fill2 = (n: number) => `0${n}`.substr(-2);
 
@@ -56,48 +52,16 @@ export const createCachedFetcher = <T>(
   };
 };
 
-export interface NumberChain {
-  value(): number;
-}
+export function collectMatchingUpTo<T>(
+  items: T[],
+  matches: (item: T) => boolean,
+  maxCount: number
+): T[] {
+  const result: T[] = [];
 
-export interface ArrayChain<T> {
-  map<U>(iteratee: (item: T, index: number) => U): ArrayChain<U>;
-  filter(predicate: (item: T, index: number) => boolean): ArrayChain<T>;
-  take(n: number): ArrayChain<T>;
-  size(): NumberChain;
-  value(): T[];
-}
+  for (let i = 0; i < items.length && result.length < maxCount; i++) {
+    if (matches(items[i])) result.push(items[i]);
+  }
 
-function createNumberChain(n: number): NumberChain {
-  return {
-    value: () => n,
-  };
+  return result;
 }
-
-function createArrayChain<T>(arr: T[]): ArrayChain<T> {
-  return {
-    map<U>(iteratee: (item: T, index: number) => U): ArrayChain<U> {
-      const next = map(arr, iteratee) as U[];
-      return createArrayChain<U>(next);
-    },
-    filter(predicate: (item: T, index: number) => boolean): ArrayChain<T> {
-      const next = filter(arr, predicate) as T[];
-      return createArrayChain<T>(next);
-    },
-    take(n: number): ArrayChain<T> {
-      const next = take(arr, n) as T[];
-      return createArrayChain<T>(next);
-    },
-    size(): NumberChain {
-      const n = size(arr);
-      return createNumberChain(n);
-    },
-    value(): T[] {
-      return arr;
-    },
-  };
-}
-
-export const chain = <T>(input: readonly T[] | T[]): ArrayChain<T> => {
-  return createArrayChain<T>(input as T[]);
-};
